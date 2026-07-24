@@ -1,0 +1,13 @@
+{
+  "name": "lancreisaude-api",
+  "version": "1.0.0",
+  "description": "API Node.js para status do sistema",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
