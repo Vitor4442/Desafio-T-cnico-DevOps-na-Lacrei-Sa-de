@@ -1,0 +1,48 @@
+name: CI pipeline
+
+on:
+  push:
+    branches:
+      - master
+    
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: InstalInstalar dependências
+        run: npm ci
+
+      - name: Executar testes
+        run: npm test
+      
+      - name:  Build da imagem Docker
+        run: docker build -t lacrei-api:latest .
+      
+      - name: 🚀 Iniciar container
+        run: |
+          docker run -d \
+            --name lacrei-api \
+            -p 3000:3000 \
+            lacrei-api:latest
+      
+      - name: Health Check
+        run: |
+          curl --fail http://localhost:3000/status
+
+      - name: Parar container
+        if: always()
+        run: docker stop lacrei-api && docker rm lacrei-api
