@@ -1,0 +1,131 @@
+name: cd
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: lacrei-api
+  ECS_CLUSTER: lacrei-cluster
+  ECS_SERVICE: lacrei-api-service
+  CONTAINER_NAME: lacrei-api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      #################################################
+      # Checkout
+      #################################################
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      #################################################
+      # AWS credentials
+      #################################################
+
+      - name: Configurar credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      #################################################
+      # Login ECR
+      #################################################
+
+      - name: Login no Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      #################################################
+      # Build
+      #################################################
+
+      - name: Build da imagem Docker
+        id: build-image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+
+          IMAGE_URI=$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+          docker build \
+            -t $IMAGE_URI \
+            -t $REGISTRY/$ECR_REPOSITORY:latest \
+            .
+
+          echo "image=$IMAGE_URI" >> $GITHUB_OUTPUT
+
+      #################################################
+      # Validação
+      #################################################
+
+      - name: Iniciar container para validação
+        run: |
+
+          docker run -d \
+            --name lacrei-api \
+            -p 3000:3000 \
+            ${{ steps.build-image.outputs.image }}
+
+          sleep 5
+
+      - name: Health Check
+        run: |
+
+          curl --fail http://localhost:3000/status
+
+      - name: Remover container de teste
+        if: always()
+        run: |
+
+          docker stop lacrei-api || true
+          docker rm lacrei-api || true
+
+      #################################################
+      # Push
+      #################################################
+
+      - name: Push da imagem
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+
+          docker push $REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$ECR_REPOSITORY:latest
+
+      #################################################
+      # Atualiza Task Definition
+      #################################################
+
+      - name: Atualizar Task Definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      #################################################
+      # Deploy
+      #################################################
+
+      - name: Deploy ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ env.ECS_SERVICE }}
+          wait-for-service-stability: true
