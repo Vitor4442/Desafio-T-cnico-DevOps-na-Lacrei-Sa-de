@@ -40,7 +40,20 @@ jobs:
             lacrei-api:latest
       
       - name: Health Check
-        run: curl --fail http://localhost:3000/status
+        run: |
+          for i in {1..30}; do
+            if curl --fail http://localhost:3000/status; then
+              echo "API saudável!"
+              exit 0
+            fi
+
+            echo "Aguardando aplicação iniciar..."
+            sleep 2
+          done
+
+          echo "A aplicação não iniciou."
+          docker logs lacrei-api
+          exit 1
 
       - name: Parar container
         if: always()
