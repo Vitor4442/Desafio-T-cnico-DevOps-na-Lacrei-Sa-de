@@ -23,17 +23,17 @@
 
       "portMappings": [
         {
-          "containerPort": 3000,
+          "containerPort": 443,
           "protocol": "tcp",
-          "appProtocol": "http",
-          "name": "http"
+          "appProtocol": "https",
+          "name": "https"
         }
       ],
 
       "healthCheck": {
         "command": [
           "CMD-SHELL",
-          "curl -f http://localhost:3000/status || exit 1"
+          "curl -k -f https://localhost/status || exit 1"
         ],
         "interval": 30,
         "timeout": 5,
