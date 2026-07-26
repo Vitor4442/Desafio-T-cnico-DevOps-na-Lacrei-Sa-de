@@ -13,7 +13,7 @@ env:
   ECR_REPOSITORY: lacrei-api
   ECS_CLUSTER: lacrei-cluster
   ECS_SERVICE: lacrei-api-staging-service-ekt1ep1s
-  CONTAINER_NAME: lacrei-api
+  CONTAINER_NAME: lacrei-api-staging
 
 jobs:
   deploy:
@@ -76,7 +76,7 @@ jobs:
 
           docker run -d \
             --name lacrei-api \
-            -p 3000:3000 \
+            -p 443:443 \
             ${{ steps.build-image.outputs.image }}
 
           sleep 5
@@ -84,7 +84,7 @@ jobs:
       - name: Health Check
         run: |
 
-          curl --fail http://localhost:3000/status
+          curl -k --fail https://localhost/status
 
       - name: Remover container de teste
         if: always()
@@ -114,7 +114,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json
+          task-definition: task-definition-staging.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
