@@ -76,7 +76,7 @@ jobs:
 
           docker run -d \
             --name lacrei-api \
-            -p 3000:3000 \
+            -p 443:443 \
             ${{ steps.build-image.outputs.image }}
 
           sleep 5
@@ -84,7 +84,7 @@ jobs:
       - name: Health Check
         run: |
 
-          curl --fail https://localhost/status
+          curl -k --fail https://localhost/status
 
       - name: Remover container de teste
         if: always()
