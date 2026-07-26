@@ -4,7 +4,7 @@ const path = require('path');
 const { createServer } = require('./app');
 
 const port = process.env.PORT || 443;
-const requestHandler = createServer(); // Agora recebe a função (req, res)
+const requestHandler = createServer(); 
 
 const options = {
   key: fs.readFileSync(path.join(__dirname, '../certs/server.key')),
