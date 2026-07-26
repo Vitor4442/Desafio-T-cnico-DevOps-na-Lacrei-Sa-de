@@ -33,7 +33,7 @@
       "healthCheck": {
         "command": [
           "CMD-SHELL",
-          "curl -k -f https://localhost/status || exit 1"
+          "node -e \"require('https').get({hostname: 'localhost', port: 443, path: '/status', rejectUnauthorized: false}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));\""
         ],
         "interval": 30,
         "timeout": 5,
