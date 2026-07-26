@@ -84,7 +84,7 @@ jobs:
       - name: Health Check
         run: |
 
-          curl --fail http://localhost:3000/status
+          curl --fail https://localhost/status
 
       - name: Remover container de teste
         if: always()
