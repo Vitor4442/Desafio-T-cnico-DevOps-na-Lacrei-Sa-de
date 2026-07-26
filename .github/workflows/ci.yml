@@ -25,6 +25,10 @@ jobs:
 
       - name: InstalInstalar dependências
         run: npm ci
+      
+      - name: Executar Lint
+        run: npm run lint
+        continue-on-error: true
 
       - name: Executar testes
         run: npm test
