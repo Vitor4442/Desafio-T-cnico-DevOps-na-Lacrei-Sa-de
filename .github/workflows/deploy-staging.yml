@@ -13,7 +13,7 @@ env:
   ECR_REPOSITORY: lacrei-api
   ECS_CLUSTER: lacrei-cluster
   ECS_SERVICE: lacrei-api-staging-service-ekt1ep1s
-  CONTAINER_NAME: lacrei-api
+  CONTAINER_NAME: lacrei-api-staging
 
 jobs:
   deploy:
