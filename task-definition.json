@@ -11,10 +11,10 @@
 
       "portMappings": [
         {
-          "containerPort": 443,
+          "containerPort": 3000,
           "protocol": "tcp",
           "appProtocol": "http",
-          "name": "https"
+          "name": "http"
         }
       ],
 
@@ -28,11 +28,11 @@
           "value": "3000"
         }
       ],
-
+      
       "healthCheck": {
         "command": [
           "CMD-SHELL",
-          "node -e \"require('https').get({hostname: 'localhost', port: 443, path: '/status', rejectUnauthorized: false}, (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));\""
+          "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/status || exit 1"
         ],
         "interval": 30,
         "timeout": 5,
