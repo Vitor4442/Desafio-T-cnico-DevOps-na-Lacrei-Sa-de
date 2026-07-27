@@ -28,11 +28,11 @@
           "value": "3000"
         }
       ],
-
+      
       "healthCheck": {
         "command": [
           "CMD-SHELL",
-          "node -e 'require(\"http\").get(\"http://localhost:3000/status\", (r) => { if (r.statusCode !== 200) process.exit(1); })' || exit 1"
+          "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/status || exit 1"
         ],
         "interval": 30,
         "timeout": 5,
