@@ -19,15 +19,11 @@ API fictícia em Node.js (rota `/status`), containerizada com Docker e implantad
 
 A aplicação roda em dois serviços **Amazon ECS (Fargate)** — um para staging e outro para produção — atrás de um **Application Load Balancer (ALB)** único, que direciona o tráfego para cada ambiente. As imagens Docker são versionadas e armazenadas no **Amazon ECR**, e os logs de aplicação/deploy são centralizados no **CloudWatch**, com alarmes configurados para notificar por e-mail em caso de anomalia.
 
-```
-[GitHub Actions - CI] → [Amazon ECR] → [ECS Service: staging]  ─┐
-                                     → [ECS Service: produção] ─┼─→ [ALB] → Internet
-                                                                 │
-                                                          [CloudWatch Logs + Alarmes → E-mail]
-```
+![CI/CD](./docs/CI-CD.png)
 
 <!-- Adicione aqui a imagem da arquitetura (ex.: docs/architecture.png) -->
 ![Arquitetura da infraestrutura](./docs/architecture.png)
+
 
 
 ---
