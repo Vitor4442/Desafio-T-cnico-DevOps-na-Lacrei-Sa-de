@@ -29,7 +29,6 @@ A aplicação roda em dois serviços **Amazon ECS (Fargate)** — um para stagin
 <!-- Adicione aqui a imagem da arquitetura (ex.: docs/architecture.png) -->
 ![Arquitetura da infraestrutura](./docs/architecture.png)
 
-> *Substitua a imagem acima pelo diagrama real da infraestrutura (pode ser exportado do Excalidraw, Miro, draw.io ou até um desenho da AWS Console).*
 
 ---
 
