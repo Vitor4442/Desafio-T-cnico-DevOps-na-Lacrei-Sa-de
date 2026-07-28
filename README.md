@@ -156,7 +156,7 @@ Para reduzir ainda mais o tempo de rollback, o próximo passo seria migrar para 
 | Logs centralizados (CloudWatch) | ✅ |
 | Alertas de monitoramento (e-mail) | ✅ |
 | HTTPS/TLS nos ambientes | ⚠️ Proposto — não implementado por falta de domínio próprio disponível |
-| Rollback testado em produção | ⚠️ Documentado, ainda não executado em um incidente real |
+| Rollback testado em produção | ✅ |
 
 ---
 
