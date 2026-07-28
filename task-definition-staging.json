@@ -4,8 +4,8 @@
   "requiresCompatibilities": [
     "FARGATE"
   ],
-  "cpu": "512",
-  "memory": "1024",
+  "cpu": "1024",
+  "memory": "2048",
   "executionRoleArn": "arn:aws:iam::137769144455:role/ecsTaskExecutionRole",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
@@ -15,12 +15,9 @@
     {
       "name": "lacrei-api-staging",
       "image": "137769144455.dkr.ecr.sa-east-1.amazonaws.com/lacrei-api:latest",
-
       "essential": true,
-
-      "cpu": 512,
-      "memory": 1024,
-
+      "cpu": 0,
+      "memoryReservation": 1024,
       "portMappings": [
         {
           "containerPort": 3000,
@@ -29,18 +26,13 @@
           "name": "http"
         }
       ],
-
       "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/status || exit 1"
-        ],
+        "command": ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/status || exit 1"],
         "interval": 30,
         "timeout": 5,
         "retries": 3,
         "startPeriod": 60
       },
-
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
